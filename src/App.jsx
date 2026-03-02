@@ -66,7 +66,7 @@ function App() {
               <p>Welcome, {user.name}</p>
             </header>
 
-            {/* Stats */}
+            
             <section className="stats-grid">
               {stats.map((stat) => (
                 <div key={stat.id} className="stat-card">
@@ -76,7 +76,7 @@ function App() {
               ))}
             </section>
 
-            {/* Filter */}
+            
             <div className="filter-section">
               <label>Filter by Type:</label>
               <select
@@ -90,10 +90,10 @@ function App() {
               </select>
             </div>
 
-            {/* Multi Camera */}
+            
             <MultiCamera />
 
-            {/* Recent Detections */}
+            
             <CardGrid
               title="Recent Detections"
               data={filteredDetections}
@@ -110,7 +110,7 @@ function App() {
         {view === "camera" && <LiveCamera />}
         {view === "logs" && <DetectionLogs />}
         {view === "devices" && <DeviceManagement />}
-        {view === "users" && <UserManagement />} {/* ✅ render new page */}
+        {view === "users" && <UserManagement />} 
       </main>
     </div>
   );

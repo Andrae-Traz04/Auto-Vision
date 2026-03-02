@@ -74,20 +74,20 @@
   background-color: #b91c1c;
 }
 
-/* Role-based styling */
+
 .role-admin {
-  background-color: #e0f2fe; /* light blue */
+  background-color: #e0f2fe; 
 }
 
 .role-operator {
-  background-color: #fef9c3; /* light yellow */
+  background-color: #fef9c3; 
 }
 
 .role-viewer {
-  background-color: #f3f4f6; /* light gray */
+  background-color: #f3f4f6; 
 }
 
-/* Audit log */
+
 .audit-log {
   margin-top: 20px;
 }

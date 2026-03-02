@@ -48,7 +48,7 @@ function LiveCamera({ deviceId }) {
 
     startCamera();
     loadModel();
-  }, [deviceId]); // ✅ re-run when deviceId changes
+  }, [deviceId]);
 
   return (
     <div style={{ position: "relative", width: "640px", height: "480px" }}>

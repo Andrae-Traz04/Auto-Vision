@@ -52,7 +52,7 @@ function UserManagement() {
     <div className="user-management">
       <h2>User Management</h2>
 
-      {/* Add User Form */}
+
       <div className="add-user-form">
         <input
           type="text"
@@ -68,7 +68,7 @@ function UserManagement() {
         <button onClick={addUser}>Add User</button>
       </div>
 
-      {/* User List */}
+
       <ul className="user-list">
         {users.map((user) => (
           <li key={user.id} className={`role-${user.role.toLowerCase()}`}>
@@ -88,7 +88,7 @@ function UserManagement() {
         ))}
       </ul>
 
-      {/* Audit Log */}
+
       <div className="audit-log">
         <h3>Audit Trail</h3>
         <ul>

@@ -1,4 +1,4 @@
-/* LE DASHBOARD */
+
 
 .dashboard {
   height: 100vh;
@@ -47,7 +47,7 @@
   cursor: pointer;
 }
 
-/* Sidebar */
+
 
 .sidebar {
   width: 200px; 
@@ -70,7 +70,7 @@
   cursor: pointer;
 }
 
-/* Main Content */
+
 
 .main-content {
   flex: 1;
@@ -83,7 +83,7 @@ header h1 {
   color: black;
 }
 
-/* Stats Grid */
+
 
 .stat-card {
   background: white;
@@ -110,7 +110,7 @@ header h1 {
   color: #555;
 }
 
-/* Recent Detection Grid */
+
 
 .reports-grid {
   display: grid;

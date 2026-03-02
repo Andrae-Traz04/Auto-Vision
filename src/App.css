@@ -23,7 +23,7 @@ html, body, #root {
   width: 100%;
 }
 
-/* Sidebar */
+
 .sidebar {
   width: 220px;
   background-color: #0f172a;
@@ -55,7 +55,7 @@ html, body, #root {
   color: #f87171;
 }
 
-/* Main Content */
+
 .main-content {
   flex: 1;
   padding: 40px 50px;
@@ -63,12 +63,12 @@ html, body, #root {
   overflow-y: auto;
 }
 
-/* Dashboard Header */
+
 .dashboard-header {
   margin-bottom: 30px;
 }
 
-/* Filter Section */
+
 .filter-section {
   margin-bottom: 20px;
   display: flex;
@@ -83,7 +83,7 @@ html, body, #root {
   cursor: pointer;
 }
 
-/* Stats Grid */
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -120,19 +120,19 @@ html, body, #root {
   text-align: center;
 }
 
-/* Reusable CardGrid Section */
+
 .cardgrid-section {
   margin-top: 30px;
 }
 
-/* Reusable Grid Layout */
+
 .reports-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 20px;
 }
 
-/* Reusable Card */
+
 .report-card {
   background: #f4f4f8;
   padding: 15px;

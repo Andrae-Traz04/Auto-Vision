@@ -23,7 +23,7 @@
   font-size: 12px; 
 }
 
-/* Compact Detection Cards */
+
 .reports-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
