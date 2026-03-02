@@ -1,5 +1,5 @@
 import ".Dashboard.css";
-
+import "../styles/Dashboard.css";
 
 function Dashboard({ user, setUser }) {
   const handleLogout = () => {

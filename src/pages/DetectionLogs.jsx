@@ -1,5 +1,5 @@
 import React from "react";
-import "./DetectionLogs.css";
+import "../styles/DetectionLogs.css";
 
 function DetectionLogs() {
 

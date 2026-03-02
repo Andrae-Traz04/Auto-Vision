@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import "./App.css";
-import LiveCamera from "./main/LiveCamera.jsx";
-import DetectionLogs from "./main/DetectionLogs.jsx";
-import Login from "./main/Login.jsx";
-import MultiCamera from "./main/MultiCamera.jsx";
+import LiveCamera from "./pages/LiveCamera.jsx";
+import DetectionLogs from "./pages/DetectionLogs.jsx";
+import Login from "./pages/Login.jsx";
+import MultiCamera from "./pages/MultiCamera.jsx";
 import CardGrid from "./components/CardGrid.jsx"; 
-import DeviceManagement from "./main/DeviceManagement.jsx";
-import UserManagement from "./main/UserManagement.jsx"; // ✅ new import
+import DeviceManagement from "./pages/DeviceManagement.jsx";
+import UserManagement from "./pages/UserManagement.jsx"; // ✅ new import
 
 function App() {
   const [user, setUser] = useState(null);

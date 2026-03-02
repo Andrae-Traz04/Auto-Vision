@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./UserManagement.css";
+import "../styles/UserManagement.css";
 
 function UserManagement() {
   const [users, setUsers] = useState([

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import LiveCamera from "./LiveCamera.jsx";
-import "./DeviceManagement.css";
+import "../styles/DeviceManagement.css";
 
 function DeviceManagement() {
   const [devices, setDevices] = useState([]);
