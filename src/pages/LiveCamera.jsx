@@ -1,21 +1,23 @@
 import React, { useRef, useEffect } from "react";
 import * as cocoSsd from "@tensorflow-models/coco-ssd";
 import "@tensorflow/tfjs";
+import { useAutoVision } from "../hooks/useAutoVision";
 import "../styles/LiveCamera.css";
 
 function LiveCamera({ deviceId }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const { startCamera } = useAutoVision();
 
   useEffect(() => {
     let model;
 
-    const startCamera = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { deviceId: { exact: deviceId } }
-      });
-      videoRef.current.srcObject = stream;
-      videoRef.current.play();
+    const initCamera = async () => {
+      const stream = await startCamera(deviceId);
+      if (stream && videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
     };
 
     const loadModel = async () => {
@@ -46,9 +48,9 @@ function LiveCamera({ deviceId }) {
       requestAnimationFrame(detectFrame);
     };
 
-    startCamera();
+    initCamera();
     loadModel();
-  }, [deviceId]);
+  }, [deviceId, startCamera]);
 
   return (
     <div style={{ position: "relative", width: "640px", height: "480px" }}>

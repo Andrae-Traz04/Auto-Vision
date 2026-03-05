@@ -1,20 +1,24 @@
 import React, { useRef, useEffect } from "react";
+import { useAutoVision } from "../hooks/useAutoVision";
 import "../styles/CameraFeed.css";
 
 function CameraFeed() {
   const videoRef = useRef(null);
+  const { startCamera } = useAutoVision();
 
   useEffect(() => {
     async function enableCamera() {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        videoRef.current.srcObject = stream;
+        const stream = await startCamera();
+        if (stream && videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
       } catch (err) {
         console.error("Error accessing camera: ", err);
       }
     }
     enableCamera();
-  }, []);
+  }, [startCamera]);
 
   return (
     <div>

@@ -1,14 +1,13 @@
-import { useState } from "react";
+import { useAutoVision } from "../hooks/useAutoVision";
 import "../styles/Login.css";
 
 function Login({ setUser }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { formData, handleInputChange } = useAutoVision();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (email && password) {
-      setUser({ name: email });
+    if (formData.email && formData.password) {
+      setUser({ name: formData.email });
     }
   };
 
@@ -23,17 +22,19 @@ function Login({ setUser }) {
         <form onSubmit={handleSubmit} className="login-form">
           <input
             type="text"
+            name="email"
             placeholder="Admin Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={formData.email || ""}
+            onChange={handleInputChange}
             required
           />
 
           <input
             type="password"
+            name="password"
             placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={formData.password || ""}
+            onChange={handleInputChange}
             required
           />
 

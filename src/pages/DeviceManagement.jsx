@@ -1,41 +1,43 @@
 import React, { useState, useEffect } from "react";
 import LiveCamera from "./LiveCamera.jsx";
+import { useAutoVision } from "../hooks/useAutoVision";
 import "../styles/DeviceManagement.css";
 
 function DeviceManagement() {
   const [devices, setDevices] = useState([]);
-  const [newDevice, setNewDevice] = useState({ name: "", location: "", deviceId: "" });
+  const { formData, handleInputChange, resetForm } = useAutoVision();
   const [availableCameras, setAvailableCameras] = useState([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
     const getCameras = async () => {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const cams = devices.filter((d) => d.kind === "videoinput");
+      const mediaDevices = await navigator.mediaDevices.enumerateDevices();
+      const cams = mediaDevices.filter((d) => d.kind === "videoinput");
       setAvailableCameras(cams);
-      if (cams.length > 0) {
-        setNewDevice((prev) => ({ ...prev, deviceId: cams[0].deviceId }));
-      }
     };
     getCameras();
   }, []);
 
   const addDevice = () => {
-    if (!newDevice.name.trim() || !newDevice.location.trim() || !newDevice.deviceId) {
+    const name = formData.name || "";
+    const location = formData.location || "";
+    const deviceId = formData.deviceId || (availableCameras[0]?.deviceId || "");
+
+    if (!name.trim() || !location.trim() || !deviceId) {
       alert("Please enter name, location, and select a camera!");
       return;
     }
 
     const device = {
       id: Date.now(),
-      name: newDevice.name,
-      location: newDevice.location,
+      name,
+      location,
       status: "Online",
-      deviceId: newDevice.deviceId,
+      deviceId,
     };
 
     setDevices([...devices, device]);
-    setNewDevice({ name: "", location: "", deviceId: availableCameras[0]?.deviceId || "" });
+    resetForm();
   };
 
   const deleteDevice = (id) => {
@@ -74,19 +76,22 @@ function DeviceManagement() {
       <div className="device-form">
         <input
           type="text"
+          name="name"
           placeholder="Camera Name"
-          value={newDevice.name}
-          onChange={(e) => setNewDevice({ ...newDevice, name: e.target.value })}
+          value={formData.name || ""}
+          onChange={handleInputChange}
         />
         <input
           type="text"
+          name="location"
           placeholder="Location"
-          value={newDevice.location}
-          onChange={(e) => setNewDevice({ ...newDevice, location: e.target.value })}
+          value={formData.location || ""}
+          onChange={handleInputChange}
         />
         <select
-          value={newDevice.deviceId}
-          onChange={(e) => setNewDevice({ ...newDevice, deviceId: e.target.value })}
+          name="deviceId"
+          value={formData.deviceId || availableCameras[0]?.deviceId || ""}
+          onChange={handleInputChange}
         >
           {availableCameras.map((cam, idx) => (
             <option key={idx} value={cam.deviceId}>
@@ -107,9 +112,8 @@ function DeviceManagement() {
               Status:{" "}
               <span className="status-indicator">
                 <span
-                  className={`status-circle ${
-                    device.status === "Online" ? "online" : "offline"
-                  }`}
+                  className={`status-circle ${device.status === "Online" ? "online" : "offline"
+                    }`}
                 ></span>
                 {device.status}
               </span>
