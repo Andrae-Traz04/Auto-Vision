@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAutoVision } from "../hooks/useAutoVision";
 import "../styles/UserManagement.css";
 
@@ -6,51 +6,112 @@ function UserManagement() {
   // Use the custom hook for the "Add User" form inputs
   const { formData, handleInputChange, resetForm } = useAutoVision();
   
-  const [users, setUsers] = useState([
-    { id: 1, name: "Tyler", role: "Admin" },
-    { id: 2, name: "Dr. Robinson", role: "Operator" },
-  ]);
-  
+  const [users, setUsers] = useState([]);
   const [auditLog, setAuditLog] = useState([]);
 
-  // Helper to add entry to Audit Trail
-  const addLogEntry = (action, userName, role) => {
-    const entry = {
-      action,
-      user: userName,
-      role: role,
-      time: new Date().toLocaleString(),
-    };
-    setAuditLog((prev) => [entry, ...prev]); // Newest logs at the top
+  useEffect(() => {
+    fetchUsers();
+    fetchAuditLogs();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/users/");
+      if (res.ok) {
+        setUsers(await res.json());
+      }
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    }
   };
 
-  const addUser = () => {
+  const fetchAuditLogs = async () => {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/audit-logs/");
+      if (res.ok) {
+        setAuditLog(await res.json());
+      }
+    } catch (error) {
+      console.error("Failed to fetch audit logs:", error);
+    }
+  };
+
+  // Helper to add entry to Audit Trail
+  const addLogEntry = async (action, userName, role) => {
+    try {
+      await fetch("http://127.0.0.1:8000/api/audit-logs/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action, user: userName, role }),
+      });
+      fetchAuditLogs(); // Refresh logs list to get newest from the backend
+    } catch (error) {
+      console.error("Failed to post audit log:", error);
+    }
+  };
+
+  const addUser = async () => {
     if (!formData.newName?.trim()) return;
 
-    const newUser = {
-      id: Date.now(),
-      name: formData.newName,
-      role: formData.newRole || "Viewer",
-    };
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/users/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.newName,
+          role: formData.newRole || "Viewer",
+        }),
+      });
 
-    setUsers([...users, newUser]);
-    addLogEntry("Add User", newUser.name, newUser.role);
-    resetForm(); // Clears the input fields using the hook
+      if (res.ok) {
+        const newUser = await res.json();
+        setUsers([...users, newUser]);
+        addLogEntry("Add User", newUser.name, newUser.role);
+        resetForm(); // Clears the input fields using the hook
+      }
+    } catch (error) {
+      console.error("Failed to add user:", error);
+    }
   };
 
-  const removeUser = (id) => {
+  const removeUser = async (id) => {
     const target = users.find((u) => u.id === id);
     if (!target) return;
 
-    setUsers(users.filter((u) => u.id !== id));
-    addLogEntry("Remove User", target.name, target.role);
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/users/${id}/`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setUsers(users.filter((u) => u.id !== id));
+        addLogEntry("Remove User", target.name, target.role);
+      }
+    } catch (error) {
+      console.error("Failed to remove user:", error);
+    }
   };
 
-  const changeRole = (id, updatedRole) => {
-    setUsers(users.map((u) => (u.id === id ? { ...u, role: updatedRole } : u)));
-    
+  const changeRole = async (id, updatedRole) => {
     const target = users.find((u) => u.id === id);
-    addLogEntry("Change Role", target.name, updatedRole);
+    if (!target) return;
+
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/users/${id}/`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: updatedRole }),
+      });
+
+      if (res.ok) {
+        setUsers(
+          users.map((u) => (u.id === id ? { ...u, role: updatedRole } : u))
+        );
+        addLogEntry("Change Role", target.name, updatedRole);
+      }
+    } catch (error) {
+      console.error("Failed to update role:", error);
+    }
   };
 
   return (

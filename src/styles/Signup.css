@@ -1,0 +1,17 @@
+.signup-error {
+  color: var(--accent-red);
+  margin-bottom: 1rem;
+}
+ 
+.signup-footer {
+  margin-top: 1rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+ 
+.signup-link {
+  color: var(--primary-color);
+  cursor: pointer;
+  font-weight: bold;
+}
+ 
