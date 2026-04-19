@@ -3,6 +3,7 @@ import "./App.css";
 import LiveCamera from "./pages/LiveCamera.jsx";
 import DetectionLogs from "./pages/DetectionLogs.jsx";
 import Login from "./pages/Login.jsx";
+import Signup from "./pages/Signup.jsx";
 import MultiCamera from "./pages/MultiCamera.jsx";
 import CardGrid from "./components/CardGrid.jsx"; 
 import DeviceManagement from "./pages/DeviceManagement.jsx";
@@ -10,6 +11,7 @@ import UserManagement from "./pages/UserManagement.jsx"; // ✅ new import
 
 function App() {
   const [user, setUser] = useState(null);
+  const [authView, setAuthView] = useState("login");
   const [view, setView] = useState("dashboard");
   const [filter, setFilter] = useState("All");
 
@@ -35,10 +37,13 @@ function App() {
   const handleLogout = () => {
     setUser(null);
     setView("dashboard");
+    setAuthView("login");
   };
 
   if (!user) {
-    return <Login setUser={setUser} />;
+    return authView === "login" 
+      ? <Login setUser={setUser} switchToSignup={() => setAuthView("signup")} />
+      : <Signup setUser={setUser} switchToLogin={() => setAuthView("login")} />;
   }
 
   return (
