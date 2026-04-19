@@ -156,6 +156,7 @@ if not DEBUG:
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "https://auto-vision-lcb4.vercel.app",
 ]
 
 # Allow overriding CORS from an environment variable (comma separated)
