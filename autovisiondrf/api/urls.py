@@ -1,10 +1,10 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import DeviceViewSet, DetectionLogViewSet, SystemUserViewSet, AuditLogViewSet, register_user, login_user
+from .views import DeviceViewSet, SystemUserViewSet, AuditLogViewSet, register_user, login_user
 
 router = DefaultRouter()
 router.register(r'devices', DeviceViewSet)
-router.register(r'logs', DetectionLogViewSet)
+
 router.register(r'users', SystemUserViewSet)
 router.register(r'audit-logs', AuditLogViewSet)
 

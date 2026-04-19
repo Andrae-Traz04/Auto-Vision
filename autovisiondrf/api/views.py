@@ -4,16 +4,13 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-from .models import Device, DetectionLog, SystemUser, AuditLog
-from .serializers import DeviceSerializer, DetectionLogSerializer, SystemUserSerializer, AuditLogSerializer
+from .models import Device, SystemUser, AuditLog
+from .serializers import DeviceSerializer, SystemUserSerializer, AuditLogSerializer
 
 class DeviceViewSet(viewsets.ModelViewSet):
     queryset = Device.objects.all()
     serializer_class = DeviceSerializer
 
-class DetectionLogViewSet(viewsets.ModelViewSet):
-    queryset = DetectionLog.objects.all().order_by('-timestamp')
-    serializer_class = DetectionLogSerializer
 
 class SystemUserViewSet(viewsets.ModelViewSet):
     queryset = SystemUser.objects.all()

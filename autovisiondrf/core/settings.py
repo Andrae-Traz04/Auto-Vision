@@ -10,22 +10,37 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+import dj_database_url
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file if it exists
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-8pe^7ne+gp8erw^+5e74dbw4)msa6tf2hjq66)gxw7*1x@k_47'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-8pe^7ne+gp8erw^+5e74dbw4)msa6tf2hjq66)gxw7*1x@k_47')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Automatically set DEBUG to False when deployed on Render unless explicitly told otherwise
+DEBUG = os.environ.get('RENDER', '').lower() != 'true' and os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = []
+
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+# Also allow explicitly set hosts via comma separated list
+if os.environ.get('ALLOWED_HOSTS'):
+    ALLOWED_HOSTS.extend([host.strip() for host in os.environ.get('ALLOWED_HOSTS').split(',')])
 
 
 # Application definition
@@ -45,6 +60,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -83,6 +99,14 @@ DATABASES = {
     }
 }
 
+# Override with Render database URL if present (using dj-database-url)
+if os.environ.get('DATABASE_URL'):
+    DATABASES['default'] = dj_database_url.config(
+        env='DATABASE_URL',
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -120,10 +144,25 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# Following settings are required for production static files
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+if not DEBUG:
+    # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
+    # Enable WhiteNoise compression and caching support
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # CORS Configuration
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
-CORS_ALLOW_ALL_ORIGINS = True # Optional relaxation for local dev
+
+# Allow overriding CORS from an environment variable (comma separated)
+if os.environ.get('CORS_ALLOWED_ORIGINS'):
+    env_origins = os.environ.get('CORS_ALLOWED_ORIGINS').split(',')
+    CORS_ALLOWED_ORIGINS.extend([origin.strip() for origin in env_origins])
+
+# Allow all origins gracefully (Needed for mobile app development by default, unless otherwise specified)
+CORS_ALLOW_ALL_ORIGINS = os.environ.get('CORS_ALLOW_ALL_ORIGINS', 'True') == 'True'
 

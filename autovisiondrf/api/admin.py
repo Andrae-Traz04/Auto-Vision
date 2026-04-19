@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from django.contrib import admin
-from .models import Device, DetectionLog, SystemUser, AuditLog
+from .models import Device, SystemUser, AuditLog
 
 
 @admin.register(Device)
@@ -10,12 +10,6 @@ class DeviceAdmin(admin.ModelAdmin):
     list_filter = ['status', 'location']
     search_fields = ['name', 'device_id']
 
-
-@admin.register(DetectionLog)
-class DetectionLogAdmin(admin.ModelAdmin):
-    list_display = ['type', 'confidence', 'timestamp']
-    list_filter = ['type']
-    search_fields = ['type']
 
 
 @admin.register(SystemUser)
