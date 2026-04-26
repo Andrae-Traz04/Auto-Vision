@@ -1,33 +1,29 @@
 import { useState } from "react";
+import { authAPI } from "../service/api";
 import { useAutoVision } from "../hooks/useAutoVision";
 import "../styles/Login.css";
 import "../styles/Signup.css";
- 
+
 function Signup({ setUser, switchToLogin }) {
   const { formData, handleInputChange } = useAutoVision();
   const [error, setError] = useState("");
- 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.email && formData.password) {
       try {
-        const res = await fetch("http://127.0.0.1:8000/api/auth/register/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: formData.email, password: formData.password })
-        });
-        if (res.ok) {
-          setUser({ name: formData.email });
+        await authAPI.register(formData.email, formData.password);
+        setUser({ name: formData.email });
+      } catch (err) {
+        if (err.response) {
+          setError(err.response.data.error || "Signup failed");
         } else {
-          const data = await res.json();
-          setError(data.error || "Signup failed");
+          setError("Error connecting to server");
         }
-      } catch{
-        setError("Error connecting to server");
       }
     }
   };
- 
+
   return (
     <main className="login-page">
       <section className="login-wrapper">
@@ -35,9 +31,9 @@ function Signup({ setUser, switchToLogin }) {
         <p className="subtitle">
           Create an account to access the system
         </p>
- 
+
         {error && <p className="signup-error">{error}</p>}
- 
+
         <form onSubmit={handleSubmit} className="login-form">
           <input
             type="text"
@@ -47,7 +43,7 @@ function Signup({ setUser, switchToLogin }) {
             onChange={handleInputChange}
             required
           />
- 
+
           <input
             type="password"
             name="password"
@@ -56,10 +52,10 @@ function Signup({ setUser, switchToLogin }) {
             onChange={handleInputChange}
             required
           />
- 
+
           <button type="submit">Create Account</button>
         </form>
- 
+
         <p className="signup-footer">
           Already have an account?{" "}
           <span className="signup-link" onClick={switchToLogin}>
@@ -70,6 +66,5 @@ function Signup({ setUser, switchToLogin }) {
     </main>
   );
 }
- 
+
 export default Signup;
- 

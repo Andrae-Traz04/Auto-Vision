@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { authAPI } from "../service/api";
 import { useAutoVision } from "../hooks/useAutoVision";
 import "../styles/Login.css";
 
@@ -10,18 +11,14 @@ function Login({ setUser, switchToSignup }) {
     e.preventDefault();
     if (formData.email && formData.password) {
       try {
-        const res = await fetch("http://127.0.0.1:8000/api/auth/login/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: formData.email, password: formData.password })
-        });
-        if (res.ok) {
-          setUser({ name: formData.email });
-        } else {
-          setError("Invalid credentials");
-        }
+        await authAPI.login(formData.email, formData.password);
+        setUser({ name: formData.email });
       } catch (err) {
-        setError("Error connecting to server");
+        if (err.response) {
+          setError("Invalid credentials");
+        } else {
+          setError("Error connecting to server");
+        }
       }
     }
   };
@@ -34,7 +31,7 @@ function Login({ setUser, switchToSignup }) {
           AI Vehicle Detection & Model Classification System
         </p>
 
-        {error && <p className="error-message" style={{color: "var(--accent-red)", marginBottom: "1rem"}}>{error}</p>}
+        {error && <p className="error-message" style={{ color: "var(--accent-red)", marginBottom: "1rem" }}>{error}</p>}
 
         <form onSubmit={handleSubmit} className="login-form">
           <input
@@ -60,8 +57,8 @@ function Login({ setUser, switchToSignup }) {
 
         <p style={{ marginTop: "1rem", color: "var(--text-secondary)", textAlign: "center" }}>
           Don't have an account?{" "}
-          <span 
-            style={{ color: "var(--primary-color)", cursor: "pointer", fontWeight: "bold" }} 
+          <span
+            style={{ color: "var(--primary-color)", cursor: "pointer", fontWeight: "bold" }}
             onClick={switchToSignup}
           >
             Sign Up

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import LiveCamera from "./LiveCamera.jsx";
+import { deviceAPI } from "../service/api";
 import { useAutoVision } from "../hooks/useAutoVision";
 import "../styles/DeviceManagement.css";
 
@@ -10,6 +11,7 @@ function DeviceManagement() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
+    fetchDevices();
     const getCameras = async () => {
       const mediaDevices = await navigator.mediaDevices.enumerateDevices();
       const cams = mediaDevices.filter((d) => d.kind === "videoinput");
@@ -18,7 +20,16 @@ function DeviceManagement() {
     getCameras();
   }, []);
 
-  const addDevice = () => {
+  const fetchDevices = async () => {
+    try {
+      const res = await deviceAPI.getAll();
+      setDevices(res.data);
+    } catch (error) {
+      console.error("Failed to fetch devices:", error);
+    }
+  };
+
+  const addDevice = async () => {
     const name = formData.name || "";
     const location = formData.location || "";
     const deviceId = formData.deviceId || (availableCameras[0]?.deviceId || "");
@@ -28,30 +39,39 @@ function DeviceManagement() {
       return;
     }
 
-    const device = {
-      id: Date.now(),
-      name,
-      location,
-      status: "Online",
-      deviceId,
-    };
-
-    setDevices([...devices, device]);
-    resetForm();
+    try {
+      const res = await deviceAPI.add(name, location, deviceId);
+      setDevices([...devices, res.data]);
+      resetForm();
+    } catch (error) {
+      console.error("Failed to add device:", error);
+    }
   };
 
-  const deleteDevice = (id) => {
-    setDevices(devices.filter((d) => d.id !== id));
+  const deleteDevice = async (id) => {
+    try {
+      await deviceAPI.remove(id);
+      setDevices(devices.filter((d) => d.id !== id));
+    } catch (error) {
+      console.error("Failed to delete device:", error);
+    }
   };
 
-  const toggleStatus = (id) => {
-    setDevices(
-      devices.map((d) =>
-        d.id === id
-          ? { ...d, status: d.status === "Online" ? "Offline" : "Online" }
-          : d
-      )
-    );
+  const toggleStatus = async (id) => {
+    const device = devices.find((d) => d.id === id);
+    if (!device) return;
+    const newStatus = device.status === "Online" ? "Offline" : "Online";
+
+    try {
+      await deviceAPI.updateStatus(id, newStatus);
+      setDevices(
+        devices.map((d) =>
+          d.id === id ? { ...d, status: newStatus } : d
+        )
+      );
+    } catch (error) {
+      console.error("Failed to toggle status:", error);
+    }
   };
 
   const filteredDevices = devices.filter(
