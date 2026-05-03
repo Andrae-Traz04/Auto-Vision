@@ -1,25 +1,19 @@
 import React, { useState, useEffect } from "react";
+import { userAPI, auditAPI } from "../service/api";
 import { useAutoVision } from "../hooks/useAutoVision";
 import "../styles/UserManagement.css";
 
 function UserManagement() {
   // Use the custom hook for the "Add User" form inputs
   const { formData, handleInputChange, resetForm } = useAutoVision();
-  
+
   const [users, setUsers] = useState([]);
   const [auditLog, setAuditLog] = useState([]);
 
-  useEffect(() => {
-    fetchUsers();
-    fetchAuditLogs();
-  }, []);
-
   const fetchUsers = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/users/");
-      if (res.ok) {
-        setUsers(await res.json());
-      }
+      const res = await userAPI.getAll();
+      setUsers(res.data);
     } catch (error) {
       console.error("Failed to fetch users:", error);
     }
@@ -27,23 +21,22 @@ function UserManagement() {
 
   const fetchAuditLogs = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/audit-logs/");
-      if (res.ok) {
-        setAuditLog(await res.json());
-      }
+      const res = await auditAPI.getAll();
+      setAuditLog(res.data);
     } catch (error) {
       console.error("Failed to fetch audit logs:", error);
     }
   };
 
-  // Helper to add entry to Audit Trail
+  useEffect(() => {
+    fetchUsers();
+    fetchAuditLogs();
+  }, []);
+
+
   const addLogEntry = async (action, userName, role) => {
     try {
-      await fetch("http://127.0.0.1:8000/api/audit-logs/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action, user: userName, role }),
-      });
+      await auditAPI.add(action, userName, role);
       fetchAuditLogs(); // Refresh logs list to get newest from the backend
     } catch (error) {
       console.error("Failed to post audit log:", error);
@@ -54,21 +47,12 @@ function UserManagement() {
     if (!formData.newName?.trim()) return;
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/users/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData.newName,
-          role: formData.newRole || "Viewer",
-        }),
-      });
+      const res = await userAPI.add(formData.newName, formData.newRole || "Viewer");
 
-      if (res.ok) {
-        const newUser = await res.json();
-        setUsers([...users, newUser]);
-        addLogEntry("Add User", newUser.name, newUser.role);
-        resetForm(); // Clears the input fields using the hook
-      }
+      const newUser = res.data;
+      setUsers([...users, newUser]);
+      addLogEntry("Add User", newUser.name, newUser.role);
+      resetForm(); // Clears the input fields using the hook
     } catch (error) {
       console.error("Failed to add user:", error);
     }
@@ -79,14 +63,10 @@ function UserManagement() {
     if (!target) return;
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/users/${id}/`, {
-        method: "DELETE",
-      });
+      await userAPI.remove(id);
 
-      if (res.ok) {
-        setUsers(users.filter((u) => u.id !== id));
-        addLogEntry("Remove User", target.name, target.role);
-      }
+      setUsers(users.filter((u) => u.id !== id));
+      addLogEntry("Remove User", target.name, target.role);
     } catch (error) {
       console.error("Failed to remove user:", error);
     }
@@ -97,18 +77,12 @@ function UserManagement() {
     if (!target) return;
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/users/${id}/`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role: updatedRole }),
-      });
+      await userAPI.updateRole(id, updatedRole);
 
-      if (res.ok) {
-        setUsers(
-          users.map((u) => (u.id === id ? { ...u, role: updatedRole } : u))
-        );
-        addLogEntry("Change Role", target.name, updatedRole);
-      }
+      setUsers(
+        users.map((u) => (u.id === id ? { ...u, role: updatedRole } : u))
+      );
+      addLogEntry("Change Role", target.name, updatedRole);
     } catch (error) {
       console.error("Failed to update role:", error);
     }
@@ -127,9 +101,9 @@ function UserManagement() {
           value={formData.newName || ""}
           onChange={handleInputChange}
         />
-        <select 
-          name="newRole" 
-          value={formData.newRole || "Viewer"} 
+        <select
+          name="newRole"
+          value={formData.newRole || "Viewer"}
           onChange={handleInputChange}
         >
           <option value="Admin">Admin</option>
