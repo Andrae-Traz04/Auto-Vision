@@ -1,62 +1,18 @@
-.logs-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
-  gap: 12px;
-  margin-top: 15px;
-}
-
-.log-card {
-  background: white;
-  padding: 10px 12px; 
-  border-radius: 8px; 
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
-  font-size: 13px; 
-}
-
-.log-card h3 {
-  margin: 0 0 6px 0;
-  font-size: 15px; 
-}
-
-.log-card p {
-  margin: 2px 0;
-  font-size: 12px; 
-}
-
-
-.reports-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 20px;
-}
-
-.report-card {
-  background: #f4f4f8;
-  padding: 15px;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: 12px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.06);
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.report-card:hover {
-  transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-}
-
-.report-card h3 {
-  margin: 0;
-  font-size: 14px;
-}
-
-.report-card p {
-  margin: 4px 0 0;
-  font-size: 12px;
-  color: #333;
-}
+.detection-logs { padding: 24px; }
+.percentage-section { margin: 24px 0; }
+.percentage-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 16px; }
+.percentage-card { background: #fff; border-radius: 10px; padding: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.07); }
+.pct-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.pct-label { font-weight: bold; text-transform: capitalize; }
+.pct-value { font-weight: bold; }
+.pct-bar-bg { background: #eee; border-radius: 4px; height: 8px; width: 100%; }
+.pct-bar-fill { height: 8px; border-radius: 4px; transition: width 0.3s; }
+.pct-count { font-size: 0.8rem; color: #999; margin-top: 4px; display: block; }
+.logs-filters { display: flex; gap: 12px; margin: 20px 0; }
+.search-input { padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; flex: 1; max-width: 300px; }
+.filter-select { padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; }
+.logs-table-section { margin-top: 24px; }
+.logs-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.07); }
+.logs-table th { background: #f5f5f5; padding: 12px 16px; text-align: left; font-weight: 600; }
+.logs-table td { padding: 12px 16px; border-top: 1px solid #f0f0f0; }
+.type-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; }

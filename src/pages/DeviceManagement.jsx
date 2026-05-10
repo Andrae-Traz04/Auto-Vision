@@ -1,63 +1,133 @@
 import React, { useState, useEffect } from "react";
 import LiveCamera from "./LiveCamera.jsx";
-import { useAutoVision } from "../hooks/useAutoVision";
 import "../styles/DeviceManagement.css";
+
+const DRF_URL = "http://127.0.0.1:8000/api/devices";
 
 function DeviceManagement() {
   const [devices, setDevices] = useState([]);
-  const { formData, handleInputChange, resetForm } = useAutoVision();
+  const [loading, setLoading] = useState(true);
   const [availableCameras, setAvailableCameras] = useState([]);
   const [search, setSearch] = useState("");
+  const [name, setName] = useState("");
+  const [location, setLocation] = useState("");
+  const [selectedCameraIndex, setSelectedCameraIndex] = useState(0);
 
   useEffect(() => {
     const getCameras = async () => {
-      const mediaDevices = await navigator.mediaDevices.enumerateDevices();
-      const cams = mediaDevices.filter((d) => d.kind === "videoinput");
-      setAvailableCameras(cams);
+      try {
+        // Must request permission first so labels are visible
+        await navigator.mediaDevices.getUserMedia({ video: true });
+        const mediaDevices = await navigator.mediaDevices.enumerateDevices();
+        const cams = mediaDevices.filter((d) => d.kind === "videoinput");
+        setAvailableCameras(cams);
+      } catch (err) {
+        console.error("Camera permission denied:", err);
+      }
     };
     getCameras();
+    fetchDevices();
   }, []);
 
-  const addDevice = () => {
-    const name = formData.name || "";
-    const location = formData.location || "";
-    const deviceId = formData.deviceId || (availableCameras[0]?.deviceId || "");
+  const fetchDevices = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(DRF_URL);
+      if (res.ok) {
+        const data = await res.json();
+        setDevices(data);
+      }
+    } catch (err) {
+      console.error("Cannot reach backend:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    if (!name.trim() || !location.trim() || !deviceId) {
-      alert("Please enter name, location, and select a camera!");
+  const addDevice = async () => {
+    if (!name.trim() || !location.trim()) {
+      alert("Please enter name and location!");
       return;
     }
 
-    const device = {
-      id: Date.now(),
-      name,
-      location,
-      status: "Online",
-      deviceId,
-    };
+    const selectedCam = availableCameras[selectedCameraIndex];
 
-    setDevices([...devices, device]);
-    resetForm();
+    try {
+      const res = await fetch(`${DRF_URL}/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          location,
+          device_id: selectedCam?.deviceId || "",
+          status: "Online",
+        }),
+      });
+
+      if (res.ok) {
+        setName("");
+        setLocation("");
+        fetchDevices();
+      } else {
+        // fallback: add locally if backend fails
+        const newDevice = {
+          id: Date.now(),
+          name,
+          location,
+          device_id: selectedCam?.deviceId || "",
+          status: "Online",
+        };
+        setDevices((prev) => [...prev, newDevice]);
+        setName("");
+        setLocation("");
+      }
+    } catch (err) {
+      // fallback: add locally
+      const selectedCam = availableCameras[selectedCameraIndex];
+      const newDevice = {
+        id: Date.now(),
+        name,
+        location,
+        device_id: selectedCam?.deviceId || "",
+        status: "Online",
+      };
+      setDevices((prev) => [...prev, newDevice]);
+      setName("");
+      setLocation("");
+    }
   };
 
-  const deleteDevice = (id) => {
-    setDevices(devices.filter((d) => d.id !== id));
+  const deleteDevice = async (id) => {
+    try {
+      await fetch(`${DRF_URL}/${id}/`, { method: "DELETE" });
+    } catch (err) {
+      console.error("Delete error:", err);
+    }
+    // always remove from local state
+    setDevices((prev) => prev.filter((d) => d.id !== id));
   };
 
-  const toggleStatus = (id) => {
-    setDevices(
-      devices.map((d) =>
-        d.id === id
-          ? { ...d, status: d.status === "Online" ? "Offline" : "Online" }
-          : d
-      )
+  const toggleStatus = async (device) => {
+    const newStatus = device.status === "Online" ? "Offline" : "Online";
+    try {
+      await fetch(`${DRF_URL}/${device.id}/`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+    } catch (err) {
+      console.error("Toggle error:", err);
+    }
+    // always update local state
+    setDevices((prev) =>
+      prev.map((d) => d.id === device.id ? { ...d, status: newStatus } : d)
     );
   };
 
   const filteredDevices = devices.filter(
     (d) =>
-      d.name.toLowerCase().includes(search.toLowerCase()) ||
-      d.location.toLowerCase().includes(search.toLowerCase())
+      d.name?.toLowerCase().includes(search.toLowerCase()) ||
+      d.location?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -76,25 +146,22 @@ function DeviceManagement() {
       <div className="device-form">
         <input
           type="text"
-          name="name"
           placeholder="Camera Name"
-          value={formData.name || ""}
-          onChange={handleInputChange}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
         <input
           type="text"
-          name="location"
           placeholder="Location"
-          value={formData.location || ""}
-          onChange={handleInputChange}
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
         />
         <select
-          name="deviceId"
-          value={formData.deviceId || availableCameras[0]?.deviceId || ""}
-          onChange={handleInputChange}
+          value={selectedCameraIndex}
+          onChange={(e) => setSelectedCameraIndex(Number(e.target.value))}
         >
           {availableCameras.map((cam, idx) => (
-            <option key={idx} value={cam.deviceId}>
+            <option key={idx} value={idx}>
               {cam.label || `Camera ${idx + 1}`}
             </option>
           ))}
@@ -102,38 +169,57 @@ function DeviceManagement() {
         <button onClick={addDevice}>Add Camera</button>
       </div>
 
-      {/* ✅ Grid of camera feeds */}
-      <div className="camera-grid">
-        {filteredDevices.map((device) => (
-          <div key={device.id} className="camera-card">
-            <h3>{device.name}</h3>
-            <p>Location: {device.location}</p>
-            <p>
-              Status:{" "}
-              <span className="status-indicator">
-                <span
-                  className={`status-circle ${device.status === "Online" ? "online" : "offline"
-                    }`}
-                ></span>
-                {device.status}
-              </span>
-            </p>
+      {loading ? (
+        <p style={{ color: "#999", marginTop: 24 }}>Loading devices...</p>
+      ) : filteredDevices.length === 0 ? (
+        <p style={{ color: "#999", marginTop: 24 }}>
+          No devices found. Add a camera above.
+        </p>
+      ) : (
+        <div className="camera-grid">
+          {filteredDevices.map((device) => (
+            <div key={device.id} className="camera-card">
+              <h3>{device.name}</h3>
+              <p>Location: {device.location}</p>
+              <p>
+                Status:{" "}
+                <span className="status-indicator">
+                  <span className={`status-circle ${device.status === "Online" ? "online" : "offline"}`} />
+                  {device.status}
+                </span>
+              </p>
 
-            {device.status === "Online" && device.deviceId && (
-              <div className="camera-feed">
-                <LiveCamera deviceId={device.deviceId} />
+              {/* ← use device_id directly from stored value */}
+              {device.status === "Online" && (
+                <div className="camera-feed">
+                  <LiveCamera
+                    deviceId={
+                      // match stored device_id to available cameras
+                      availableCameras.find(
+                        (c) => c.deviceId === device.device_id
+                      )?.deviceId ||
+                      availableCameras[0]?.deviceId || // fallback to first camera
+                      undefined
+                    }
+                  />
+                </div>
+              )}
+
+              <div className="device-actions">
+                <button onClick={() => toggleStatus(device)}>
+                  Toggle Status
+                </button>
+                <button
+                  className="delete-btn"
+                  onClick={() => deleteDevice(device.id)}
+                >
+                  Delete
+                </button>
               </div>
-            )}
-
-            <div className="device-actions">
-              <button onClick={() => toggleStatus(device.id)}>Toggle Status</button>
-              <button className="delete-btn" onClick={() => deleteDevice(device.id)}>
-                Delete
-              </button>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
