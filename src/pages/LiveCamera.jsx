@@ -2,7 +2,8 @@ import React, { useRef, useEffect, useState, useCallback } from "react";
 import { useAutoVision } from "../hooks/useAutoVision";
 import "../styles/LiveCamera.css";
 
-const API_URL = "http://127.0.0.1:8000/api/detection/detect";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
+const API_URL = `${API_BASE_URL}/detection/detect`;
 
 const COLORS = {
   bicycle:    "#00FFFF",
@@ -37,8 +38,17 @@ function LiveCamera({ deviceId, updateDetections }) {
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Scale factors: Map backend coordinate space (original video width/height) to the display canvas width/height
+    const imgWidth = video.videoWidth || 640;
+    const imgHeight = video.videoHeight || 480;
+    const scaleX = canvas.width / imgWidth;
+    const scaleY = canvas.height / imgHeight;
+
     detections.forEach((det) => {
-      const [x1, y1, x2, y2] = det.bbox;
+      const x1 = det.bbox[0] * scaleX;
+      const y1 = det.bbox[1] * scaleY;
+      const x2 = det.bbox[2] * scaleX;
+      const y2 = det.bbox[3] * scaleY;
       const color = COLORS[det.class?.toLowerCase()] || "#FFFFFF";
       const label = `${det.class} ${(det.confidence * 100).toFixed(0)}%`;
 

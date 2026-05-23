@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import LiveCamera from "./LiveCamera.jsx";
 import "../styles/DeviceManagement.css";
 
-const DRF_URL = "http://127.0.0.1:8000/api/devices";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
+const DRF_URL = `${API_BASE_URL}/devices`;
 
 function DeviceManagement() {
   const [devices, setDevices] = useState([]);

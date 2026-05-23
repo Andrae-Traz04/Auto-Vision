@@ -3,6 +3,8 @@ import { useAutoVision } from "../hooks/useAutoVision";
 import "../styles/Login.css";
 import "../styles/Signup.css";
  
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
+
 function Signup({ setUser, switchToLogin }) {
   const { formData, handleInputChange } = useAutoVision();
   const [error, setError] = useState("");
@@ -11,7 +13,7 @@ function Signup({ setUser, switchToLogin }) {
     e.preventDefault();
     if (formData.email && formData.password) {
       try {
-        const res = await fetch("http://127.0.0.1:8000/api/auth/register/", {
+        const res = await fetch(`${API_BASE_URL}/auth/register/`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: formData.email, password: formData.password })
