@@ -116,11 +116,25 @@ function LiveCamera({ deviceId, updateDetections }) {
   }, [drawBoxes]); // ← no updateDetections in deps, uses ref instead
 
   useEffect(() => {
+    let isMounted = true;
     const initCamera = async () => {
       const stream = await startCamera(deviceId);
+      if (!isMounted) {
+        if (stream) {
+          stream.getTracks().forEach((t) => t.stop());
+        }
+        return;
+      }
       if (stream && videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play();
+        const playPromise = videoRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((error) => {
+            if (error.name !== "AbortError") {
+              console.error("Playback error:", error);
+            }
+          });
+        }
         setStatus("Camera ready — detecting...");
       }
     };
@@ -129,6 +143,7 @@ function LiveCamera({ deviceId, updateDetections }) {
     intervalRef.current = setInterval(detectFrame, 500); // ← 500ms is smoother
 
     return () => {
+      isMounted = false;
       clearInterval(intervalRef.current);
       if (videoRef.current?.srcObject) {
         videoRef.current.srcObject.getTracks().forEach((t) => t.stop());
