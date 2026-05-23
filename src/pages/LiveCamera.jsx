@@ -158,7 +158,7 @@ function LiveCamera({ deviceId, updateDetections }) {
           ref={videoRef}
           width="640"
           height="480"
-          style={{ position: "absolute", zIndex: 0 }}
+          style={{ position: "absolute", zIndex: 0, objectFit: "fill" }}
           muted
           playsInline
           autoPlay
