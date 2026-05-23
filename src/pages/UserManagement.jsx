@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useAutoVision } from "../hooks/useAutoVision";
 import "../styles/UserManagement.css";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
+
 function UserManagement() {
   // Use the custom hook for the "Add User" form inputs
   const { formData, handleInputChange, resetForm } = useAutoVision();
@@ -16,7 +18,7 @@ function UserManagement() {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/users/");
+      const res = await fetch(`${API_BASE_URL}/users/`);
       if (res.ok) {
         setUsers(await res.json());
       }
@@ -27,7 +29,7 @@ function UserManagement() {
 
   const fetchAuditLogs = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/audit-logs/");
+      const res = await fetch(`${API_BASE_URL}/audit-logs/`);
       if (res.ok) {
         setAuditLog(await res.json());
       }
@@ -39,7 +41,7 @@ function UserManagement() {
   // Helper to add entry to Audit Trail
   const addLogEntry = async (action, userName, role) => {
     try {
-      await fetch("http://127.0.0.1:8000/api/audit-logs/", {
+      await fetch(`${API_BASE_URL}/audit-logs/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action, user: userName, role }),
@@ -54,7 +56,7 @@ function UserManagement() {
     if (!formData.newName?.trim()) return;
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/users/", {
+      const res = await fetch(`${API_BASE_URL}/users/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -79,7 +81,7 @@ function UserManagement() {
     if (!target) return;
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/users/${id}/`, {
+      const res = await fetch(`${API_BASE_URL}/users/${id}/`, {
         method: "DELETE",
       });
 
@@ -97,7 +99,7 @@ function UserManagement() {
     if (!target) return;
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/users/${id}/`, {
+      const res = await fetch(`${API_BASE_URL}/users/${id}/`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: updatedRole }),
