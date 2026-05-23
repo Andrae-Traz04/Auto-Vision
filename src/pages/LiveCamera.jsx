@@ -158,7 +158,7 @@ function LiveCamera({ deviceId, updateDetections }) {
           ref={videoRef}
           width="640"
           height="480"
-          style={{ position: "absolute" }}
+          style={{ position: "absolute", zIndex: 0 }}
           muted
           playsInline
           autoPlay
@@ -167,7 +167,7 @@ function LiveCamera({ deviceId, updateDetections }) {
           ref={canvasRef}
           width="640"
           height="480"
-          style={{ position: "absolute", pointerEvents: "none" }}
+          style={{ position: "absolute", pointerEvents: "none", zIndex: 1 }}
         />
       </div>
 
