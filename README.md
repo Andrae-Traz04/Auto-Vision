@@ -338,33 +338,25 @@ npx expo start
 | Service | URL |
 |---------|-----|
 | Web app (dev) | http://localhost:5173 |
-| Mobile app | Scan the Expo QR code — device must be on the same LAN as the server |
+| Mobile app | [Scan the Expo QR code — device must be on the same LAN as the server](https://expo.dev/accounts/yanskii-tzy/projects/auto-vision-mobile/builds/f898ecc5-2dcc-49a7-96f9-4689877c7af2) |
 | FastAPI REST | https://avfa.onrender.com/api |
 | Swagger UI | https://avfa.onrender.com/docs |
 | Roboflow dataset | https://roboflow.com — project: `philippine-vehicles-combined-sa0yj` |
 
 ---
 
-## 9. Test Account
 
-A default admin account is available for testing:
-
-| Field | Value |
-|-------|-------|
-| Email | [fill in] |
-| Password | [fill in] |
-| Role | Admin |
 
 Additional roles available: Viewer. All accounts can be managed from the User Management screen (Admin only).
 
 ---
 
-## 10. Team Members and Roles
+## 9. Team Members and Roles
 
 | Name | Role / Modules |
 |------|----------------|
-| Keith Andrae Trazares | [Modules] |
-| Dave Adryanne Salem | [Modules] |
+| Keith Andrae Trazares | [Modules 1] |
+| Dave Adryanne Salem | [Modules 2] |
 
 ---
 
