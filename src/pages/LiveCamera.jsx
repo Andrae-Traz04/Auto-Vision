@@ -38,6 +38,8 @@ function LiveCamera({ deviceId, updateDetections }) {
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    console.log("[drawBoxes] called with", detections.length, "detections, canvas:", canvas.width, "x", canvas.height, "video:", video.videoWidth, "x", video.videoHeight);
+
     // Scale factors: Map backend coordinate space (original video width/height) to the display canvas width/height
     const imgWidth = video.videoWidth || 640;
     const imgHeight = video.videoHeight || 480;
@@ -92,14 +94,17 @@ function LiveCamera({ deviceId, updateDetections }) {
 
           if (response.ok) {
             const result = await response.json();
-            drawBoxes(result.detections || []);
+            const dets = result.detections || [];
+            console.log("[LiveCamera] API response detections:", dets.length, dets);
+
+            drawBoxes(dets);
 
             // Use ref instead of prop directly — no re-render trigger
             if (updateDetectionsRef.current) {
-              updateDetectionsRef.current(result.detections || []);
+              updateDetectionsRef.current(dets);
             }
 
-            setStatus(`Detecting... ${result.detections?.length || 0} vehicle(s) found`);
+            setStatus(`Detecting... ${dets.length} vehicle(s) found`);
           }
         } catch (err) {
           console.error("Detection error:", err);
@@ -158,7 +163,7 @@ function LiveCamera({ deviceId, updateDetections }) {
           ref={videoRef}
           width="640"
           height="480"
-          style={{ position: "absolute" }}
+          style={{ position: "absolute", zIndex: 0, objectFit: "fill" }}
           muted
           playsInline
           autoPlay
@@ -167,7 +172,7 @@ function LiveCamera({ deviceId, updateDetections }) {
           ref={canvasRef}
           width="640"
           height="480"
-          style={{ position: "absolute", pointerEvents: "none" }}
+          style={{ position: "absolute", pointerEvents: "none", zIndex: 1 }}
         />
       </div>
 
