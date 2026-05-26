@@ -265,9 +265,18 @@ Frontend renders bounding boxes on canvas overlay
 
 ---
 
+<<<<<<< HEAD
 ## 6. Installation & Setup
 
 ### 6.1 Requirements
+=======
+
+    
+
+## 7. Installation & Setup
+
+### 7.1 Requirements
+>>>>>>> 2459113 (Update README.md)
 
 - Python 3.10+
 - Node.js 18+
