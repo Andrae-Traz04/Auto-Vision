@@ -265,91 +265,16 @@ Frontend renders bounding boxes on canvas overlay
 
 ---
 
-## 6. Entity Relationship Diagram
+## 6. Installation & Setup
 
-```mermaid
-erDiagram
-    auth_user {
-        int id PK
-        string username UK
-        string password
-        string first_name
-        string last_name
-        string email
-        int is_active
-        int is_staff
-        int is_superuser
-        datetime last_login
-        datetime date_joined
-    }
-
-    api_device {
-        int id PK
-        string device_id UK
-        string name
-        string location
-        string status
-        datetime created_at
-    }
-
-    api_systemuser {
-        int id PK
-        string name
-        string role
-        datetime created_at
-    }
-
-    api_auditlog {
-        int id PK
-        string action
-        string user
-        string role
-        datetime timestamp
-    }
-
-    api_detectionsession {
-        int id PK
-        int user_id FK
-        int car_count
-        int truck_count
-        int bus_count
-        int motorcycle_count
-        float average_confidence
-        string video_url
-        datetime timestamp
-    }
-
-    api_detectionlog {
-        int id PK
-        int session_id FK
-        string device_id FK
-        string label
-        float confidence
-        float bbox_x1
-        float bbox_y1
-        float bbox_x2
-        float bbox_y2
-        int frame_number
-        datetime timestamp
-    }
-
-    auth_user ||--o{ api_detectionsession : "creates"
-    api_detectionsession ||--o{ api_detectionlog : "contains"
-    api_device ||--o{ api_detectionlog : "captured by"
-```
-
----
-
-## 7. Installation & Setup
-
-### 7.1 Requirements
+### 6.1 Requirements
 
 - Python 3.10+
 - Node.js 18+
 - Expo CLI (`npm install -g expo-cli`)
 - PostgreSQL (optional — defaults to SQLite for local development)
 
-### 7.2 Backend Setup (FastAPI)
+### 6.2 Backend Setup (FastAPI)
 
 ```bash
 git clone https://github.com/[repo]/avfastapi.git
@@ -373,7 +298,7 @@ cp .env.example .env
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### 7.3 Web App Setup
+### 6.3 Web App Setup
 
 ```bash
 git clone https://github.com/[repo]/Auto-Vision.git
@@ -387,7 +312,7 @@ echo VITE_API_URL=http://localhost:8000/api > .env
 npm run dev
 ```
 
-### 7.4 Mobile App Setup
+### 6.4 Mobile App Setup
 
 ```bash
 git clone https://github.com/[repo]/Auto-VisionMobile-App.git
@@ -405,7 +330,7 @@ npx expo start
 
 ---
 
-## 8. Deployment Links
+## 7. Deployment Links
 
 | Service | URL |
 |---------|-----|
@@ -417,7 +342,7 @@ npx expo start
 
 ---
 
-## 9. Test Account
+## 8. Test Account
 
 A default admin account is available for testing:
 
@@ -431,7 +356,7 @@ Additional roles available: Viewer. All accounts can be managed from the User Ma
 
 ---
 
-## 10. Team Members and Roles
+## 9. Team Members and Roles
 
 | Name | Role / Modules |
 |------|----------------|
@@ -440,7 +365,7 @@ Additional roles available: Viewer. All accounts can be managed from the User Ma
 
 ---
 
-## 11. Known Limitations
+## 10. Known Limitations
 
 - **No JWT / token expiry** — authentication is not production-secure; tokens are not implemented
 - **Plain-text passwords** — passwords are not hashed in the demo build; apply bcrypt before any production deployment
