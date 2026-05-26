@@ -215,31 +215,6 @@ Note: Motorcycle has the lowest mAP (0.783) due to visual similarity with tricyc
 
 ![System Architecture](readmeimages/system_architecture.png)
 
-```
-┌─────────────────────┐         ┌──────────────────────┐
-│   Web Dashboard     │         │     Mobile App       │
-│  React + Vite       │         │  React Native/Expo   │
-│  (Browser)          │         │  (iOS / Android)     │
-└──────────┬──────────┘         └──────────┬───────────┘
-           │                               │
-           │          HTTP REST API        │
-           └───────────────┬───────────────┘
-                           ↓
-              ┌────────────────────────┐
-              │     FastAPI Backend    │
-              │   Render.com Cloud     │
-              │ avfa.onrender.com/api  │
-              └────────────┬───────────┘
-                           │
-           ┌───────────────┼───────────────┐
-           ↓               ↓               ↓
-    ┌─────────────┐  ┌──────────────┐  ┌────────────┐
-    │ PostgreSQL  │  │  YOLOv8      │  │ Cloudinary │
-    │  Database   │  │  ONNX        │  │    CDN     │
-    │ (Logs, Users│  │  Inference   │  │  (Session  │
-    │  Devices)   │  │  Engine      │  │  Videos)   │
-    └─────────────┘  └──────────────┘  └────────────┘
-```
 
 **Vehicle Detection Flow:**
 
@@ -361,6 +336,8 @@ Additional roles available: Viewer. All accounts can be managed from the User Ma
 ---
 
 ## 11. Known Limitations
+
+
 
 - **Hardcoded API URL** — `VITE_API_URL` and `EXPO_PUBLIC_API_URL` must be updated manually per environment
 - **CPU-only ONNX inference** — no GPU acceleration; inference speed depends on server CPU
