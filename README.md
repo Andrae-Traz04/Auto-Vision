@@ -362,8 +362,6 @@ Additional roles available: Viewer. All accounts can be managed from the User Ma
 
 ## 11. Known Limitations
 
-- **No JWT / token expiry** — authentication is not production-secure; tokens are not implemented
-- **Plain-text passwords** — passwords are not hashed in the demo build; apply bcrypt before any production deployment
 - **Hardcoded API URL** — `VITE_API_URL` and `EXPO_PUBLIC_API_URL` must be updated manually per environment
 - **CPU-only ONNX inference** — no GPU acceleration; inference speed depends on server CPU
 - **No live stream support** — detection works on individual frames only; true video streaming requires additional implementation
