@@ -313,7 +313,7 @@ npx expo start
 | Service | URL |
 |---------|-----|
 | Web app (dev) | http://localhost:5173 |
-| Mobile app | (https://expo.dev/accounts/yanskii-tzy/projects/auto-vision-mobile/builds/f898ecc5-2dcc-49a7-96f9-4689877c7af2) |
+| Mobile app | (https://expo.dev/accounts/yanskii-tzy/projects/auto-vision-mobile/builds/edf71472-f81c-49fd-9b2a-69154ef4985c) |
 | FastAPI REST | https://avfa.onrender.com/api |
 | Swagger UI | https://avfa.onrender.com/docs |
 | Roboflow dataset | https://roboflow.com — project: `philippine-vehicles-combined-sa0yj` |
