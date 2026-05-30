@@ -357,8 +357,8 @@ A default admin account is available for testing:
 
 | Field | Value |
 |-------|-------|
-| Email | [fill in] |
-| Password | [fill in] |
+| Email | veej@gmail.com |
+| Password | Admin123 |
 | Role | Admin |
 
 Additional roles available: Viewer. All accounts can be managed from the User Management screen (Admin only).
