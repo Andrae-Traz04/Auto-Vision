@@ -326,7 +326,14 @@ Additional roles available: Viewer. All accounts can be managed from the User Ma
 
 ---
 
-## 9. Team Members and Roles
+## 9. Test account
+| email | veej@gmail.com |
+| pass | Admin123 |
+| role | Admin |
+
+---
+
+## 10. Team Members and Roles
 
 | Name | Role / Modules |
 |------|----------------|
