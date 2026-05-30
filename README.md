@@ -327,7 +327,7 @@ Additional roles available: Viewer. All accounts can be managed from the User Ma
 ---
 
 ## 9. Test account
-| email | veej@gmail.com |
+| email | iaml43004@gmail.com |
 | pass | Admin123 |
 | role | Admin |
 
