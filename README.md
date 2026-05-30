@@ -357,7 +357,7 @@ A default admin account is available for testing:
 
 | Field | Value |
 |-------|-------|
-| Email | veej@gmail.com |
+| Email | iaml43004@gmail.com |
 | Password | Admin123 |
 | Role | Admin |
 
